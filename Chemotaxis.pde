@@ -12,14 +12,8 @@ void draw(){
   background(150);
   int changeX,changeY;
   for(Particle particle:particles){
-    if(particle.getCharge()){
-      changeX = -particle.getBiasX(particles);
-      changeY = -particle.getBiasY(particles);
-    }
-    else{
-      changeX = +particle.getBiasX(particles);
-      changeY = +particle.getBiasY(particles);
-    }
+    changeX = particle.getBiasX(particles);
+    changeY = particle.getBiasY(particles);
     if(!particle.wouldCollide(particles, particle.getX()+changeX, particle.getY()+changeY))
       particle.move(changeX + rand(-5,5), changeY + rand(-5,5));
     else
@@ -35,9 +29,11 @@ void mousePressed(){
     particles.add(new Particle(mouseX,mouseY, false));
 }  
 void keyPressed(){
-  if(key == 32){
+  if(key == 32)
     showBubbles = !showBubbles;
-  }
+  
+  if(key == ENTER || key == RETURN)
+    particles.clear();
 }
 
 
@@ -94,25 +90,21 @@ class Particle{
   int getBiasX(ArrayList<Particle> particles){
     int countRight = 0;
     int countLeft = 0;
-    int change = 1;
+    int influence;
     for(Particle particle:particles){
-      if(particle.getCharge())
-        change = 1;
-      else
-        change = -1;
-        
-      if(distanceBetween(x,y,particle.getX(), particle.getY())<100)
-        change*=2;
-      if(distanceBetween(x,y,particle.getX(), particle.getY())<500)
-        change*=2;
-      else
-        change=0;
+      influence = (1000-distanceBetween(x, y, particle.getX(), particle.getY()))/200;
         
       if(particle.getX()>x){
-        countRight += change;
+        if(this.charge != particle.getCharge())
+          countRight += influence;
+        else
+          countRight -= influence;
       }
       if(particle.getX()<x){
-        countLeft += change;
+        if(this.charge != particle.getCharge())
+          countLeft += influence;
+        else
+          countLeft -= influence;
       }
     }
     return(countRight-countLeft);
@@ -120,25 +112,21 @@ class Particle{
   int getBiasY(ArrayList<Particle> particles){
     int countBelow = 0;
     int countAbove = 0;
-    int change = 1;
-    for(Particle particle:particles){
-      if(particle.getCharge())
-        change = 1;
-      else
-        change = -1;
-        
-      if(distanceBetween(x,y,particle.getX(), particle.getY())<100)
-        change*=2;
-      if(distanceBetween(x,y,particle.getX(), particle.getY())<500)
-        change*=2;
-      else
-        change=0;
+    int influence;
+    for(Particle particle:particles){        
+      influence = (1000-distanceBetween(x, y, particle.getX(), particle.getY()))/200;
       
       if(particle.getY()>y){
-        countAbove += change;
+        if(this.charge != particle.getCharge())
+          countAbove += influence;
+        else
+          countAbove -= influence;
       }
       if(particle.getY()<y){
-        countBelow += change;
+        if(this.charge != particle.getCharge())
+          countBelow += influence;
+        else
+          countBelow -= influence;
       }
     }
     return(countAbove-countBelow);
