@@ -10,7 +10,7 @@ void setup(){
 
 void draw(){
   background(150);
-  int changeX,changeY;
+  double changeX,changeY;
   for(Particle particle:particles){
     changeX = particle.getBiasX(particles);
     changeY = particle.getBiasY(particles);
@@ -40,19 +40,19 @@ void keyPressed(){
 int rand(int start, int end){
   return((int)(Math.random()*(difference(start, end)+1))+start);
 }
-int difference(int a, int b){
+double difference(double a, double b){
   return(Math.abs(a-b));
 }
-int distanceBetween(int x1, int y1, int x2, int y2){
-  return((int)Math.sqrt(Math.pow(difference(x1,x2),2) + Math.pow(difference(y1,y2),2)));
+double distanceBetween(double x1, double y1, double x2, double y2){
+  return(Math.sqrt(Math.pow(difference(x1,x2),2) + Math.pow(difference(y1,y2),2)));
 }
 
 
 class Particle{
-  int x, y;
+  double x, y;
   int[] rgb;
   boolean charge;
-  Particle(int startX,int startY, boolean charge){
+  Particle(double startX,double startY, boolean charge){
     x = startX;
     y = startY;
     this.charge = charge;
@@ -66,16 +66,16 @@ class Particle{
       stroke(0,0,255);
       fill(0,0,255);
     }
-    ellipse(x,y,25,25);
+    ellipse((float)x,(float)y,25,25);
     if(showBubbles){
       if(charge)
         fill(255,0,0, 15);
       else
         fill(0,0,255, 15);
-      ellipse(x,y,500,500);
+      ellipse((float)x,(float)y,500,500);
     }
   }
-  void move(int changeX, int changeY){
+  void move(double changeX, double changeY){
     x+=changeX;
     y+=changeY;
     if(x>1000)
@@ -87,10 +87,10 @@ class Particle{
     if(y<0)
       y=0;
   }
-  int getBiasX(ArrayList<Particle> particles){
+  double getBiasX(ArrayList<Particle> particles){
     int countRight = 0;
     int countLeft = 0;
-    int influence;
+    double influence;
     for(Particle particle:particles){
       influence = (1000-distanceBetween(x, y, particle.getX(), particle.getY()))/200;
         
@@ -109,10 +109,10 @@ class Particle{
     }
     return(countRight-countLeft);
   }
-  int getBiasY(ArrayList<Particle> particles){
+  double getBiasY(ArrayList<Particle> particles){
     int countBelow = 0;
     int countAbove = 0;
-    int influence;
+    double influence;
     for(Particle particle:particles){        
       influence = (1000-distanceBetween(x, y, particle.getX(), particle.getY()))/200;
       
@@ -131,17 +131,17 @@ class Particle{
     }
     return(countAbove-countBelow);
   }
-  boolean wouldCollide(ArrayList<Particle> particles, int proposedX, int proposedY){
+  boolean wouldCollide(ArrayList<Particle> particles, double proposedX, double proposedY){
     for(Particle particle:particles){
       if(particle != this && distanceBetween(proposedX, proposedY, particle.getX(), particle.getY())<25)
         return true;
     }
     return false;
   }
-  int getX(){
+  double getX(){
     return x;
   }
-  int getY(){
+  double getY(){
     return y;
   }
   boolean getCharge(){
